@@ -1,1 +1,2 @@
-export { default as ImageList, ImageListProps } from './image-list';
+export { default as ImageList } from './image-list';
+export type { ImageListProps } from './image-list';

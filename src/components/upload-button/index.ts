@@ -1,1 +1,2 @@
-export { default as UploadButton, UploadButtonProps } from './upload-button';
+export { default as UploadButton } from './upload-button';
+export type { UploadButtonProps } from './upload-button';
