@@ -2,10 +2,20 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-// TODO: update config for production
+function isProd() {
+  return process.env.NODE_ENV === 'production';
+}
+
+function whenProd(str = '') {
+  if (isProd()) {
+    return str;
+  }
+  return '';
+}
 
 module.exports = {
   target: 'web',
+  mode: isProd() ? 'production' : 'development',
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     modules: ['node_modules'],
@@ -21,8 +31,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, './dist'),
     publicPath: '',
-    filename: 'static/js/[name].js',
-    chunkFilename: 'static/js/[name].chunk.js',
+    filename: `static/js/[name]${whenProd('.[contenthash]')}.js`,
+    chunkFilename: `static/js/[name]${whenProd('.[contenthash]')}.chunk.js`,
   },
   devServer: {
     historyApiFallback: {
@@ -44,7 +54,10 @@ module.exports = {
     rules: [
       {
         test: /.*\.worker\.(js|ts)$/,
-        use: { loader: 'worker-loader', options: { name: 'static/workers/[hash].worker.js' } },
+        use: {
+          loader: 'worker-loader',
+          options: { name: `static/workers/[name]${whenProd('.[hash]')}.worker.js` },
+        },
       },
       {
         test: /\.tsx?$/,
