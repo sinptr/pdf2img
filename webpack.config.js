@@ -18,7 +18,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, './dist'),
-    publicPath: '/',
+    publicPath: '',
     filename: 'static/js/[name].js',
     chunkFilename: 'static/js/[name].chunk.js',
   },
@@ -42,7 +42,7 @@ module.exports = {
     rules: [
       {
         test: /.*\.worker\.(js|ts)$/,
-        use: { loader: 'worker-loader' },
+        use: { loader: 'worker-loader', options: { name: 'static/workers/[hash].worker.js' } },
       },
       {
         test: /\.tsx?$/,
