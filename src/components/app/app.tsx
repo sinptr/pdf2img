@@ -3,29 +3,24 @@ import React, { useCallback, useRef, useState } from 'react';
 import { hot } from 'react-hot-loader/root';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Box, Button, Grid } from '@material-ui/core';
-// @ts-ignore
-import pdfjs from 'pdfjs-dist/build/pdf';
-// @ts-ignore
-import Worker from 'pdfjs-dist/build/pdf.worker';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { UploadButton } from '../upload-button';
 import { loadFile, pdfToImage, replaceExtension } from '../../utils';
 import { ImageProps } from '../image';
 import { ImageList } from '../image-list';
-
-if (typeof window !== 'undefined' && 'Worker' in window) {
-  pdfjs.GlobalWorkerOptions.workerPort = new Worker();
-}
+import { pdfjs } from '../../lib';
 
 function App() {
   const [imageList, setImageList] = useState<ImageProps[]>([]);
-  const [ready, setReady] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   const ref = useRef<HTMLFormElement>(null!);
 
   const onChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.currentTarget;
+    setImageList([]);
+    setGenerating(true);
     // eslint-disable-next-line no-restricted-syntax
     for (const file of files!) {
       const pdf = await pdfjs.getDocument(new Uint8Array(await loadFile(file))).promise;
@@ -35,7 +30,7 @@ function App() {
         setImageList(l => [...l, { blob: image, name: fileName }]);
       }
     }
-    setReady(true);
+    setGenerating(false);
 
     ref.current.reset();
   }, []);
@@ -58,11 +53,11 @@ function App() {
           <form ref={ref}>
             <Grid container spacing={2}>
               <Grid item>
-                <UploadButton id="upload" onChange={onChange} color="primary">
+                <UploadButton id="upload" onChange={onChange} color="primary" disabled={generating}>
                   Выбрать файлы
                 </UploadButton>
               </Grid>
-              {ready && (
+              {!generating && !!imageList.length && (
                 <Grid item>
                   <Button onClick={downloadAll}>Скачать все</Button>
                 </Grid>
