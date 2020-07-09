@@ -1,11 +1,16 @@
 {
   "name": "pdf2img",
+  "homepage": "https://sinptr.github.io/pdf2img",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
+    "prebuild": "rimraf dist",
     "build": "webpack",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "postdeploy": "rimraf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
