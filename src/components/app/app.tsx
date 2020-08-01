@@ -24,6 +24,7 @@ function App() {
     // eslint-disable-next-line no-restricted-syntax
     for (const file of files!) {
       const pdf = await pdfjs.getDocument(new Uint8Array(await loadFile(file))).promise;
+      // TODO: create scale picker from UI
       const image = await pdfToImage(pdf, 3);
       if (image) {
         const fileName = replaceExtension(file.name, 'png');
